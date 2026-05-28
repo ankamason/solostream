@@ -1,0 +1,28 @@
+# Never commit media files
+*.mp3
+*.wav
+*.flac
+*.mp4
+*.mov
+*.aac
+*.ogg
+
+# Never commit secrets
+.env
+
+# Never commit logs
+*.log
+
+# Never commit the database
+*.db
+
+# Go build artifacts
+solostream
+/tmp
+
+# Assets directory (thumbnails stored locally)
+/assets/*
+!assets/.gitkeep
+
+# macOS
+.DS_Store
