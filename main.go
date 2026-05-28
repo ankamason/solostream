@@ -5,10 +5,12 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/ankamason/solostream/internal/database"
 	"github.com/joho/godotenv"
 )
 
 type apiConfig struct {
+	db           database.Client
 	port         string
 	jwtSecret    string
 	platform     string
@@ -22,12 +24,28 @@ type apiConfig struct {
 func main() {
 	godotenv.Load(".env")
 
+	pathToDB := os.Getenv("DB_PATH")
+	if pathToDB == "" {
+		log.Fatal("DB_PATH must be set")
+	}
+
+	db, err := database.NewClient(pathToDB)
+	if err != nil {
+		log.Fatalf("Couldn't connect to database: %v", err)
+	}
+
+	err = db.CreateTables()
+	if err != nil {
+		log.Fatalf("Couldn't create tables: %v", err)
+	}
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		log.Fatal("PORT environment variable is not set")
 	}
 
 	cfg := apiConfig{
+		db:           db,
 		port:         port,
 		jwtSecret:    os.Getenv("JWT_SECRET"),
 		platform:     os.Getenv("PLATFORM"),
